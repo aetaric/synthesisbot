@@ -8,7 +8,7 @@ class Twitch
   match /^!follow (.+)/, use_prefix: false, method: :follow
 
   def follow(m, plug)
-    if m.user.is_op?
+    if m.user.oper
       3.times
         m.reply "Hey Chat! You should follow https://www.twitch.tv/#{plug} !"
       end
