@@ -1,0 +1,3 @@
+---
+ missing: 
+  - log all events to a file (likely can be handled by ZNC)
