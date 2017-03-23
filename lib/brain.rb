@@ -4,7 +4,7 @@ require 'json'
 require 'active_support'
 
 class Brain
-  attr_accessor :users, :channels, :plugins, :bot, :config
+  attr_accessor :users, :channels, :password, :plugins, :bot, :config
   
   def initialize
     @redis = Redis.new :db => 1

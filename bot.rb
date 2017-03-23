@@ -19,6 +19,7 @@ Dir["./lib/*.rb"].each {|file| load file}
 Dir["./plugins/*.rb"].each {|file| load file}
 
 $brain = Brain.new
+$host_chans = []
 
 if !$brain.config
   system "clear"
@@ -51,6 +52,15 @@ if !$brain.config
   else
     bot["ssl_verify"] = false
   end
+  
+  print "Server Password?[default is none] "
+  response = gets.chomp
+  if response === ""
+    bot["password"] = gets.chomp
+  else
+    bot["password"] = ""
+  end
+
   $brain.bot = bot
   puts "Bot Info configured..."
   sleep 1
@@ -78,7 +88,7 @@ if !$brain.config
   sleep 1
 
   puts "Setting plugins to defaults..."
-  plugins = [constantize("CommandPlugin"), constantize("Logging")]
+  plugins = [constantize("CommandPlugin"), constantize("Cinch::Logging"), constantize("Twitch")]
   $brain.plugins = plugins
 
   system("clear")
@@ -104,11 +114,13 @@ end
     c.port = $brain.bot["port"]
     c.ssl.use = $brain.bot["ssl"]
     c.ssl.verify = $brain.bot["ssl_verify"]
+    c.password = $brain.bot["password"]
     c.channels = channels
+    c.caps = [:"twitch.tv/membership", :"twitch.tv/commands"]
     c.plugins.options[Cinch::Logging] = {
       :logfile => "/tmp/public.log", # required
       :timeformat => "%H:M",
-      :format => "<%{time}> %{nick}: %{msg},
+      :format => "<%{time}> %{nick}: %{msg}",
       :midnight_message => "=== New day: %Y-%m-%d ==="
     }
     c.plugins.plugins = plugins
@@ -120,6 +132,7 @@ end
       $brain.channels.push m.channel
     end
   end
+  
 end
 
 $plugin_list = Cinch::PluginList.new @bot

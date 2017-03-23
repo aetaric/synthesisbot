@@ -70,13 +70,13 @@ class CommandPlugin
   def add_user(m, nick, permission)
     if permission_check_provision(m, 65, permission)
       user_hash = {}
-      user = User(nick)
-      user_hash["nick"] = user.nick
-      user_hash["ident"] = user.user
+      user_hash["nick"] = nick.downcase
+      user_hash["ident"] = nick.downcase
       user_hash["permission"] = permission
 
       $brain.users.push user_hash
       $brain.save
+      m.reply "Added user!"
     end
   end
 
