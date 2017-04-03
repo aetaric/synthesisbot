@@ -12,10 +12,13 @@ GEM
       i18n (~> 0.7)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
+    bson (4.2.1)
     concurrent-ruby (1.0.5)
     i18n (0.8.1)
     mini_portile2 (2.1.0)
     minitest (5.10.1)
+    mongo (2.4.1)
+      bson (>= 4.2.1, < 5.0.0)
     nokogiri (1.7.1)
       mini_portile2 (~> 2.1.0)
     redis (3.1.0)
@@ -29,6 +32,7 @@ PLATFORMS
 DEPENDENCIES
   activesupport
   cinch!
+  mongo
   nokogiri
   redis
 

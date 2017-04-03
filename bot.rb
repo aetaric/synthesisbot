@@ -140,7 +140,6 @@ end
   on :hosttarget do |m|
     # implement hosttarget tracking and redirection here
   end
-
   
 end
 

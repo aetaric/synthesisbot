@@ -9,6 +9,7 @@ class Twitch
   match /mod (.+)/, method: :mod
   match /addmember (.+)/, method: :addmember
   match /hostmode (.+)/, method: :hostmode
+  match /viewers resubscribed while you were away/, method: :processlive
 
   def follow(m, plug)
     if permission_check(m, 20)
@@ -34,4 +35,9 @@ class Twitch
     end
   end
 
+  def processlive(m)
+    if m.user == "twitchnotify"
+      $host_chans.push m.channel
+    end
+  end
 end
