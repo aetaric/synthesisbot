@@ -132,6 +132,16 @@ end
       $brain.channels.push m.channel
     end
   end
+
+  on :notice do |m|
+    # implement now hosting handling here
+  end
+
+  on :hosttarget do |m|
+    # implement hosttarget tracking and redirection here
+    @bot.warn "test hosttarget"
+  end
+
   
 end
 

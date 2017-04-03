@@ -34,11 +34,4 @@ class Twitch
     end
   end
 
-  on :NOTICE do |m|
-    # implement now hosting handling here
-  end
-
-  on :HOSTTARGET do |m|
-    # implement hosttarget tracking and redirection here
-  end
 end
