@@ -91,6 +91,14 @@ if !$brain.config
   plugins = [constantize("CommandPlugin"), constantize("Cinch::Logging"), constantize("Twitch")]
   $brain.plugins = plugins
 
+  puts "Configuring Twitch Credentials..."
+  twitchcreds = {}
+  print "Client ID: "
+  twitchcreds["client"] = gets.chomp
+  print "Client Secret: "
+  twitchcreds["secret"] = gets.chomp
+  $brain.twitchcreds = twitchcreds
+
   system("clear")
   puts "Initial config complete... SAVING!"
   $brain.save
@@ -106,6 +114,8 @@ plugins = []
 $brain.plugins.each do |plugin|
   plugins.push constantize(plugin)
 end
+
+
 
 @bot = Cinch::Bot.new do
   configure do |c|
