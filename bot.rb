@@ -139,7 +139,6 @@ end
 
   on :hosttarget do |m|
     # implement hosttarget tracking and redirection here
-    @bot.warn "test hosttarget"
   end
 
   
