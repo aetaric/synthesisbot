@@ -19,7 +19,10 @@ Dir["./lib/*.rb"].each {|file| load file}
 Dir["./plugins/*.rb"].each {|file| load file}
 
 $brain = Brain.new
+
 $host_chans = []
+$live_chans = []
+$team_chans = []
 
 if !$brain.config
   system "clear"
@@ -92,12 +95,14 @@ if !$brain.config
   $brain.plugins = plugins
 
   puts "Configuring Twitch Credentials..."
-  twitchcreds = {}
+  twitch = {}
   print "Client ID: "
-  twitchcreds["client"] = gets.chomp
+  twitch["client"] = gets.chomp
   print "Client Secret: "
-  twitchcreds["secret"] = gets.chomp
-  $brain.twitchcreds = twitchcreds
+  twitch["secret"] = gets.chomp
+  print "Twitch Team: "
+  twitch["team"] = gets.chomp
+  $brain.twitch = twitch
 
   system("clear")
   puts "Initial config complete... SAVING!"
@@ -126,7 +131,7 @@ end
     c.ssl.verify = $brain.bot["ssl_verify"]
     c.password = $brain.bot["password"]
     c.channels = channels
-    c.caps = [:"twitch.tv/membership", :"twitch.tv/commands"]
+    c.caps = [:"twitch.tv/membership", :"twitch.tv/commands", :"twitch.tv/tags"]
     c.plugins.options[Cinch::Logging] = {
       :logfile => "/tmp/public.log", # required
       :timeformat => "%H:M",
@@ -149,8 +154,23 @@ end
 
   on :hosttarget do |m|
     # implement hosttarget tracking and redirection here
+    @bot.warn "channel: " + m.channel.to_s
+    @bot.warn "target: " + m.message
   end
   
+  on :join do |m|
+    if m.user == $brain.bot["nick"]
+      if !$brain.channels.include? m.channel
+        $brain.channels.push m.channel
+        $brain.save
+      end
+      sleep 120
+      if !m.channel.opped? $brain.bot["nick"]
+        m.reply "@" + chan_to_user(m) + ", I need Mod and Editor permissions in order to function! Please Mod me and add me to your Editors."
+      end
+    end
+  end
+
 end
 
 $plugin_list = Cinch::PluginList.new @bot

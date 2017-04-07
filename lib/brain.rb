@@ -4,7 +4,7 @@ require 'json'
 require 'active_support'
 
 class Brain
-  attr_accessor :users, :channels, :plugins, :bot, :config, :twitchcreds
+  attr_accessor :users, :channels, :plugins, :bot, :config, :twitch
   
   def initialize
     @redis = Redis.new :db => 1
@@ -12,7 +12,7 @@ class Brain
     @users = JSON.load(@redis.get("users"))
     @plugins = JSON.load(@redis.get("plugins"))
     @channels = JSON.load(@redis.get("channels"))
-    @twitchcreds = JSON.load(@redis.get("twitch"))
+    @twitch = JSON.load(@redis.get("twitch"))
     if @redis.get "config"
       if @redis.get("config").to_i == 1
         @config = true
@@ -28,7 +28,7 @@ class Brain
       @redis.set "users", @users.to_json
       @redis.set "plugins", @plugins.to_json
       @redis.set "channels", @channels.to_json
-      @redis.set "twitch", @twitchcreds.to_json
+      @redis.set "twitch", @twitch.to_json
       @redis.set "config", 1
     end
   end
@@ -39,7 +39,7 @@ class Brain
     @users = JSON.load(@redis.get("users"))
     @plugins = JSON.load(@redis.get("plugins"))
     @channels = JSON.load(@redis.get("channels"))
-    @twitchcreds = JSON.load(@redis.get("twitch"))
+    @twitch = JSON.load(@redis.get("twitch"))
     @config = true
   end
 end
