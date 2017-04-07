@@ -32,14 +32,6 @@ class Twitch
     end
   end
 
-  def mod?(m)
-    if m.tags["mod"].to_i == 1
-      return true
-    else
-      return false
-    end
-  end
-
   def pull_team
     uri = URI.parse("https://api.twitch.tv/kraken/teams/" + $brain.twitch["team"])
     request = Net::HTTP::Get.new(uri)
