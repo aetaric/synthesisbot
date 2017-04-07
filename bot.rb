@@ -103,7 +103,7 @@ end
 
   on :userstate do |m|
     if !mod?(m)
-      if !m.channel.to_s.split(1,m.channel.to_s.length) == $brain.bot["nick"].to_s
+      if !m.channel.to_s.slice(1,m.channel.to_s.length) == $brain.bot["nick"].to_s
         m.reply "@" + chan_to_user(m) + ", I need Mod and Editor permissions in order to function! Please Mod me and add me to your Editors."
       end
     end
