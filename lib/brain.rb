@@ -4,7 +4,7 @@ require 'json'
 require 'active_support'
 
 class Brain
-  attr_accessor :users, :channels, :plugins, :bot, :config, :twitch
+  attr_accessor :users, :channels, :plugins, :bot, :config, :twitch, :mongo
   
   def initialize
     @redis = Redis.new :db => 1
@@ -13,6 +13,7 @@ class Brain
     @plugins = JSON.load(@redis.get("plugins"))
     @channels = JSON.load(@redis.get("channels"))
     @twitch = JSON.load(@redis.get("twitch"))
+    @mongo = JSON.load(@redis.get("mongo"))
     if @redis.get "config"
       if @redis.get("config").to_i == 1
         @config = true
@@ -29,6 +30,7 @@ class Brain
       @redis.set "plugins", @plugins.to_json
       @redis.set "channels", @channels.to_json
       @redis.set "twitch", @twitch.to_json
+      @redis.set "mongo", @mongo.to_json
       @redis.set "config", 1
     end
   end
@@ -40,6 +42,7 @@ class Brain
     @plugins = JSON.load(@redis.get("plugins"))
     @channels = JSON.load(@redis.get("channels"))
     @twitch = JSON.load(@redis.get("twitch"))
+    @mongo = JSON.load(@redis.get("mongo"))
     @config = true
   end
 
@@ -122,6 +125,18 @@ class Brain
     print "Twitch Team: "
     twitch["team"] = gets.chomp
     $brain.twitch = twitch
+
+    puts "Configuring MongoDB..."
+    mongo = {}
+    print "Database name: "
+    mongo["db"] = gets.chomp
+    replset = {}
+    print "Replication Set name: "
+    replset["name"] = gets.chomp
+    print "Replication Set members (comma sperated): "
+    replset["members"] = gets.chomp.split(",")
+    mongo["replSet"] = replset
+    $brain.mongo = mongo
 
     system("clear")
     puts "Initial config complete... SAVING!"

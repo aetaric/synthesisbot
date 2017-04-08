@@ -1,47 +1,55 @@
 class Cinch::Logging
   include Cinch::Plugin
 
-  set :required_options, [:logfile]
-
   listen_to :connect,    :method => :setup
   listen_to :disconnect, :method => :cleanup
   listen_to :channel,    :method => :log_public_message
-  timer 60,              :method => :check_midnight
+  listen_to :notice,     :method => :log_notice
+  listen_to :roomstate,  :method => :log_roomstate
+  listen_to :hosttarget, :method => :log_hosttarget
+  listen_to :clearchat,  :method => :log_clearchat
+  listen_to :usernotice, :method => :log_usernotice
 
   def setup(*)
-    @logfile          = File.open(config[:logfile], "a")
-    @timeformat       = config[:timeformat]       || "%H:%M"
-    @logformat        = config[:format]           || "<%{time}> %{nick}: %{msg}"
-    @midnight_message = config[:midnight_message] || "=== The dawn of a new day: %Y-%m-%d ==="
-    @last_time_check  = Time.now
-
-    bot.debug("Opened message logfile at #{config[:logfile]}")
-  end
-
-  def cleanup(*)
-    @logfile.close
-    bot.debug("Closed message logfile.")
-  end
-
-  def check_midnight
-    time = Time.now
-    @logfile.puts(time.strftime(@midnight_message)) if time.day != @last_time_check.day
-    @last_time_check = time
+    @collection = $mongo[:logs]
   end
 
   def log_public_message(msg)
-    time = Time.now.strftime(@timeformat)
+    time = Time.now
     if !msg.user.nil?
-      @logfile.puts(sprintf(@logformat,
-                            :time => time,
-                            :nick => msg.user.name,
-                            :msg  => msg.message))
+      @collection.insert_one( { :time => time, :type => "Chat", :nick => msg.user.name, :channel => msg.channel.name, :msg => msg.message, :tags => msg.tags } )
     else
-      @logfile.puts(sprintf(@logformat,
-                            :time => time,
-                            :nick => nil,
-                            :msg  => msg.message))
+      @collection.insert_one( { :time => time, :type => "Chat", :nick => nil, :channel => msg.channel.name, :msg => msg.message, :tags => msg.tags } )
     end
+  end
+
+  def log_notice(msg)
+    time = Time.now
+    if !msg.channel.nil?
+      @collection.insert_one( { :time => time, :type => "Notice", :nick => "system (Notice)", :channel => msg.channel.name, :msg => msg.message, :tags => msg.tags } )
+    else
+      @collection.insert_one( { :time => time, :type => "Notice", :nick => "system (Notice)", :channel => nil, :msg => msg.message, :tags => msg.tags } )
+    end
+  end
+
+  def log_roomstate(msg)
+    time = Time.now
+    @collection.insert_one( { :time => time, :type => "RoomState", :nick => "System (RoomState)", :channel => msg.channel.name, :msg => "Room state changed!", :tags => msg.tags } )
+  end
+
+  def log_hosttarget(msg)
+    time = Time.now
+    @collection.insert_one( { :time => time, :type => "HostTarget", :nick => "System (HostTarget)", :channel => msg.channel.name, :msg => msg.message, :tags => msg.tags } )
+  end
+
+  def log_clearchat(msg)
+    time = Time.now
+    @collection.insert_one( { :time => time, :type => "ClearChat", :nick => msg.message, :channel => msg.channel.name, :msg => "User Purge/Timeout/Ban", :tags => msg.tags } )
+  end
+
+  def log_usernotice(msg)
+    time = Time.now
+    @collection.insert_one( { :time => time, :type => "UserNotice", :nick => msg.tags["display-name"], :channel => msg.channel.name, :msg => msg.message, :tags => msg.tags } )
   end
 
 end

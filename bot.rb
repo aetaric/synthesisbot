@@ -12,6 +12,9 @@ require 'active_support'
 # add Inflector methods and overrides.
 include ActiveSupport::Inflector
 
+# require mongodb driver for working with various long term storage of data
+require 'mongo'
+
 # load libs
 Dir["./lib/*.rb"].each {|file| load file}
 
@@ -27,6 +30,8 @@ $team_chans = []
 if !$brain.config
   $brain.setup
 end
+
+$mongo = Mongo::Client.new($brain.mongo["replSet"]["members"], :database => $brain.mongo["db"], replica_set: $brain.mongo["replSet"]["name"])
 
 channels = []
 $brain.channels.each do |chan|
@@ -66,6 +71,9 @@ end
 
   on :notice do |m|
     # implement now hosting handling here
+    if !(/has gone offline. Exiting host mode./.match(m.message)).nil?
+      @bot.warn "#{chan_to_user(m)} no longer hosting"
+    end
   end
 
   on :hosttarget do |m|
@@ -76,7 +84,6 @@ end
   
   on :join do |m|
     if m.user == $brain.bot["nick"]
-
       match_chan = false
 
       $brain.channels.each do |chan|
@@ -91,7 +98,6 @@ end
         $brain.channels.push ch
         $brain.save
       end
-
     end
   end
 
