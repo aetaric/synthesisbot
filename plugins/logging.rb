@@ -14,42 +14,41 @@ class Cinch::Logging
     @collection = $mongo[:logs]
   end
 
+  def log_message(type, nick, channel, message, tags)
+      time = Time.now
+      @collection.insert_one( { :time => time, :type => type, :nick => nick, :channel => channel, :msg => message, :tags => tags } )
+  end
+
   def log_public_message(msg)
-    time = Time.now
     if !msg.user.nil?
-      @collection.insert_one( { :time => time, :type => "Chat", :nick => msg.user.name, :channel => msg.channel.name, :msg => msg.message, :tags => msg.tags } )
+      log_message "Chat", msg.user.name, msg.channel.name, msg.message, msg.tags
     else
-      @collection.insert_one( { :time => time, :type => "Chat", :nick => nil, :channel => msg.channel.name, :msg => msg.message, :tags => msg.tags } )
+      log_message "Chat", nil, msg.channel.name, msg.message, msg.tags
     end
   end
 
   def log_notice(msg)
-    time = Time.now
     if !msg.channel.nil?
-      @collection.insert_one( { :time => time, :type => "Notice", :nick => "system (Notice)", :channel => msg.channel.name, :msg => msg.message, :tags => msg.tags } )
+      log_message "Notice", "system (Notice)", msg.channel.name, msg.message, msg.tags
     else
-      @collection.insert_one( { :time => time, :type => "Notice", :nick => "system (Notice)", :channel => nil, :msg => msg.message, :tags => msg.tags } )
+      log_message "Notice", "system (Notice)", nil, msg.message, msg.tags
     end
   end
 
   def log_roomstate(msg)
-    time = Time.now
-    @collection.insert_one( { :time => time, :type => "RoomState", :nick => "System (RoomState)", :channel => msg.channel.name, :msg => "Room state changed!", :tags => msg.tags } )
+    log_message "RoomState", "System (RoomState)", msg.channel.name, "Room state changed!", msg.tags
   end
 
   def log_hosttarget(msg)
-    time = Time.now
-    @collection.insert_one( { :time => time, :type => "HostTarget", :nick => "System (HostTarget)", :channel => msg.channel.name, :msg => msg.message, :tags => msg.tags } )
+    log_message "HostTarget", "System (HostTarget)", msg.channel.name, msg.message, msg.tags
   end
 
   def log_clearchat(msg)
-    time = Time.now
-    @collection.insert_one( { :time => time, :type => "ClearChat", :nick => msg.message, :channel => msg.channel.name, :msg => "User Purge/Timeout/Ban", :tags => msg.tags } )
+    log_message "ClearChat", msg.message, msg.channel.name, "User Purge/Timeout/Ban", msg.tags
   end
 
   def log_usernotice(msg)
-    time = Time.now
-    @collection.insert_one( { :time => time, :type => "UserNotice", :nick => msg.tags["display-name"], :channel => msg.channel.name, :msg => msg.message, :tags => msg.tags } )
+    log_message "UserNotice", msg.tags["display-name"], msg.channel.name, msg.message, msg.tags
   end
 
 end
