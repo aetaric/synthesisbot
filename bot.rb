@@ -53,13 +53,9 @@ end
     c.password = $brain.bot["password"]
     c.channels = channels
     c.caps = [:"twitch.tv/membership", :"twitch.tv/commands", :"twitch.tv/tags"]
-    c.plugins.options[Cinch::Logging] = {
-      :logfile => "/tmp/public.log", # required
-      :timeformat => "%H:M",
-      :format => "<%{time}> %{nick}: %{msg}",
-      :midnight_message => "=== New day: %Y-%m-%d ==="
-    }
     c.plugins.plugins = plugins
+    c.shared[:cooldown] = { :config => { } }
+
   end
 
   on :invite do |m|
@@ -78,8 +74,10 @@ end
 
   on :hosttarget do |m|
     # implement hosttarget tracking and redirection here
+    split_msg = m.message.split(" ")
     @bot.warn "channel: " + m.channel.to_s
-    @bot.warn "target: " + m.message
+    @bot.warn "target: " + split_msg[0]
+    @bot.warn "viewers: " + split_msg[1]
   end
   
   on :join do |m|

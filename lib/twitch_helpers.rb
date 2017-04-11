@@ -10,3 +10,8 @@ def mod?(m)
     return false
   end
 end
+
+def channel_to_key(channel)
+  return channel if channel.is_a?(Symbol)
+  channel[/\w+/].to_sym
+end

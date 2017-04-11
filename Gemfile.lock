@@ -4,6 +4,14 @@ GIT
   specs:
     cinch (2.3.1)
 
+GIT
+  remote: https://github.com/aetaric/cinch-cooldown
+  revision: f9d3a0ba4384a4d3403f1064add257c76f0ab88f
+  specs:
+    cinch-cooldown (1.2.0)
+      cinch (~> 2)
+      time-lord (~> 1.0, >= 1.0.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -28,6 +36,7 @@ GEM
       mini_portile2 (~> 2.1.0)
     redis (3.3.3)
     thread_safe (0.3.6)
+    time-lord (1.0.1)
     twitch (0.1.3)
       httparty
       json
@@ -40,6 +49,7 @@ PLATFORMS
 DEPENDENCIES
   activesupport
   cinch!
+  cinch-cooldown!
   eventmachine
   mongo
   nokogiri

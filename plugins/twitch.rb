@@ -1,4 +1,5 @@
 require 'cinch'
+require 'cinch/cooldown'
 require 'active_support'
 require 'json'
 require 'net/http'
@@ -7,6 +8,8 @@ require 'uri'
 class Twitch
   include Cinch::Plugin
   include ActiveSupport::Inflector
+
+  enforce_cooldown
 
   match /follow (.+)/, method: :follow
   match /source/, method: :source
