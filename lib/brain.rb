@@ -113,7 +113,7 @@ class Brain
     sleep 1
 
     puts "Setting plugins to defaults..."
-    plugins = [constantize("CommandPlugin"), constantize("Cinch::Logging"), constantize("Twitch")]
+    plugins = [constantize("CommandPlugin"), constantize("Cinch::Logging"), constantize("Twitch"), constantize("AutoBan"), constantize("TwitchHost"), constantize("TwitchMod"), constantize("CustomCommand")]
     $brain.plugins = plugins
 
     puts "Configuring Twitch Credentials..."

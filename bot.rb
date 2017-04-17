@@ -32,6 +32,7 @@ if !$brain.config
 end
 
 $mongo = Mongo::Client.new($brain.mongo["replSet"]["members"], :database => $brain.mongo["db"], replica_set: $brain.mongo["replSet"]["name"])
+Mongo::Logger.logger.level = ::Logger::FATAL
 
 channels = []
 $brain.channels.each do |chan|

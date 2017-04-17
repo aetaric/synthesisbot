@@ -7,7 +7,11 @@ def mod?(m)
   if m.tags["mod"].to_i == 1
     return true
   else
-    return false
+    if chan_to_user(m) == m.user.nick
+      return true
+    else
+      return false
+    end
   end
 end
 
