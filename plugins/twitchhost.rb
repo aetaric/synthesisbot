@@ -25,13 +25,9 @@ class TwitchHost
   def update_host(m)
     split_msg = m.message.split(" ")
     target = split_msg[0]
-    if target != "-"
-      $host_chans.delete chan_to_user(m)
-    else
-      if !$live_chans.include? chan_to_user(m)
-        if !$host_chans.include? chan_to_user(m)
-          $host_chans.push chan_to_user(m)
-        end 
+    if target == "-"
+      if $host_chans.include?
+        $host_chans.delete chan_to_user(m)
       end
     end
   end
@@ -48,7 +44,8 @@ class TwitchHost
     if mod?(m)
       $team_chans.each do |chan|
         if !$live_chans.include? chan["name"]
-          m.replay chan["name"].to_s
+          m.reply "#{chan["name"].to_s} Now hosting #{target}"
+          Channel(chan["name"].to_s).send (".host #{target}")
         end 
       end
     end
