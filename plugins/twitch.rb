@@ -40,7 +40,7 @@ class Twitch
 
   def commands(m)
     if mod?(m)
-      m.reply ".w #{m.user} My Commands are here: https://gist.githubusercontent.com/aetaric/df04e55c159baabafc2194f8516715fc/raw/37150d87f5b88a9aa8f54328a3c57e996c114c22/gistfile1.txt"
+      m.reply ".w #{m.user} My Commands are here: https://gist.githubusercontent.com/aetaric/df04e55c159baabafc2194f8516715fc/raw/e77e5db52718db1ca48cea64f3ccdb3c1c59e13f/gistfile1.txt"
     end
   end
 end

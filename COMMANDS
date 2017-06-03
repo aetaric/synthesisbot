@@ -21,3 +21,4 @@ Custom Commands:
 General Commands:
   !follow {user} - thows a plug to follow a user (does this 3 times)
   !source - Whispers the user with the link to the source code of the bot (The bot is OpenSource so any viewer/mod/team member is free to submit a Pull Request that fixes something or adds a feature)
+  !commands - Whispers the user this list
