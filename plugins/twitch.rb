@@ -13,8 +13,9 @@ class Twitch
 
   match /follow (.+)/, method: :follow
   match /source/, method: :source
-  match /viewers resubscribed while you were away/, method: :processlive
   match /host (.+)/, method: :host
+  match /synthesis/, method: :synthesis
+  match /commands/, methods: :commands
 
   def follow(m, plug)
     if mod?(m) 
@@ -27,16 +28,19 @@ class Twitch
     m.reply ".w #{m.user} You can find my source code here: https://github.com/aetaric/aetbot ."
   end
 
-  def processlive(m)
-    if m.user == "twitchnotify"
-      $live_chans.push m.channel
-    end
-  end
-
   def host(m, target)
     if mod?(m)
       m.reply ".host #{target}"
     end
   end
 
+  def synthesis(m)
+    # m.reply "SOMETHING"
+  end
+
+  def commands(m)
+    if mod?(m)
+      m.reply ".w #{m.user} My Commands are here: https://gist.githubusercontent.com/aetaric/df04e55c159baabafc2194f8516715fc/raw/37150d87f5b88a9aa8f54328a3c57e996c114c22/gistfile1.txt"
+    end
+  end
 end

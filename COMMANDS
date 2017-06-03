@@ -1,0 +1,23 @@
+Requirements to function correctly:
+  Mod: 
+    Increased info only provided to mods for logging.
+    Access to higher rate limits (not required per se, but it helps)
+  Editor:
+    Access to the Editor role to control hosting.  
+
+Global text commands:
+  !synthesis - A blurb about the team
+
+Hosting Commands:
+  !masshost {target} - Only works in Sythesisbot's own channel - Makes the whole team host a single target. This an be outside of the team.
+  !pullteam - Forcefully updates the team info and live states. (will force a host on any non-live and non-hosting channels)
+  !host {target} - Allows you to force a channel to host a target (or your mods)
+
+Custom Commands:
+  !addcomm {command} {message} - Adds a custom command for your channel only.
+  !updatecomm {command} {message} - Updates command with new message
+  !deletecomm {command} - Deletes command
+
+General Commands:
+  !follow {user} - thows a plug to follow a user (does this 3 times)
+  !source - Whispers the user with the link to the source code of the bot (The bot is OpenSource so any viewer/mod/team member is free to submit a Pull Request that fixes something or adds a feature)

@@ -11,8 +11,9 @@ class CustomCommand
   listen_to :connect, :method => :setup
 
   match /^!(\w+)/i, use_prefix: false, method: :custom
-  match /addcomm (\w+) (\w+)/, method: :add_custom
-  match /updatecomm (\w+) (\w+)/, method: :update_custom
+  match /addcomm (\w+)([a-zA-Z0-9\w\W ]*)/, method: :add_custom
+  match /updatecomm (\w+) ([a-zA-Z0-9\w\W ]*)/, method: :update_custom
+  match /deletecomm (\w+)/, method: :delete_custom
 
   def setup(*)
     @collection = $mongo[:commands]
@@ -21,14 +22,15 @@ class CustomCommand
   def custom(m, command)
     results = @collection.find(channel: m.channel.name, command: command)
     if results.any?
-      m.reply "@#{m.user.name}, #{results.first.message}"
+      m.reply "@#{m.user.name}, #{results.first["message"]}"
     end
   end
 
   def add_custom(m, command, message)
     if mod? m
       if !command.nil? && !message.nil?
-        @collection.insert( { :channel => m.channel.name, :command => command, :message => message } )
+        @collection.insert_one( { :channel => m.channel.name, :command => command, :message => message } )
+        m.reply "@#{m.user.name}, Added command: #{command}"
       end
     end
   end
@@ -36,8 +38,18 @@ class CustomCommand
   def update_custom(m, command, message)
     if mod? m
       if !command.nil? && !message.nil?
-        @colletion.update( { :channel => m.channel.name, :command => command }, 
+        @collection.update_one( { :channel => m.channel.name, :command => command }, 
                            { :channel => m.channel.name, :command => command, :message => message } )
+        m.reply "@#{m.user.name}, Updated command: #{command}"
+      end
+    end
+  end
+
+  def delete_custom(m, command)
+    if mod? m
+      if !command.nil?
+        @collection.delete_one( { :channel => m.channel.name, :command => command } )
+        m.reply "@#{m.user.name}, Deleted Command: #{command}"
       end
     end
   end

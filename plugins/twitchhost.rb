@@ -1,5 +1,3 @@
-require 'cinch'
-require 'active_support'
 require 'json'
 require 'net/http'
 require 'uri'
@@ -8,7 +6,8 @@ class TwitchHost
   include Cinch::Plugin
   include ActiveSupport::Inflector
 
-  match /viewers resubscribed while you were away/, method: :process_live
+  match /masshost (.+)/, method: :mass_host
+  match /pullteam/, method: :pull_team
 
   listen_to :hosttarget, :method => :update_host
   listen_to :notice, :method => :target_offline
@@ -27,14 +26,30 @@ class TwitchHost
     split_msg = m.message.split(" ")
     target = split_msg[0]
     if target != "-"
-      $live_chans.delete chan_to_user(m)
+      $host_chans.delete chan_to_user(m)
+    else
+      if !$live_chans.include? chan_to_user(m)
+        if !$host_chans.include? chan_to_user(m)
+          $host_chans.push chan_to_user(m)
+        end 
+      end
     end
   end
 
   def target_offline(m)
     if /has gone offline. Exiting host mode./.match m.message
-      if !$host_chans.include chan_to_user(m)
+      if !$host_chans.include? chan_to_user(m)
         $host_chans.push chan_to_user(m)
+      end
+    end
+  end
+
+  def mass_host(m, target)
+    if mod?(m)
+      $team_chans.each do |chan|
+        if !$live_chans.include? chan["name"]
+          m.replay chan["name"].to_s
+        end 
       end
     end
   end
@@ -54,36 +69,31 @@ class TwitchHost
       http.request(request)
     end
   
-    if response.code == 200
-      output = JSON.load(response.body)
-      puts output
-      if !output.nil?
-        output["users"].each do |user|
-          exist = false
+    output = JSON.load(response.body)
+    #puts output
+    if !output.nil?
+      output["users"].each do |user|
+        exist = false
 
-          $team_chans.each do |chan|
-            if user["name"] == chan["name"]
-              exist = true
-            end
+        $team_chans.each do |chan|
+          if user["name"] == chan["name"]
+            exist = true
           end
+        end
 
-          if !exist
-            u = {}
-            u["id"] = user["_id"]
-            u["game"] = user["game"]
-            u["name"] = user["name"]
-            $team_chans.push u
-
-            chan = "#" +user["name"].to_s
-            Channel(chan).join
-          end
+        if !exist
+          u = {}
+          u["id"] = user["_id"]
+          u["game"] = user["game"]
+          u["name"] = user["name"]
+          $team_chans.push u
         end
       end
     end
     pull_live
   end
 
-  def pull_live
+  def pull_live(m=nil)
     ids = []
     $team_chans.each do |chan|
       ids.push chan["id"]
@@ -103,16 +113,16 @@ class TwitchHost
       http.request(request)
     end
 
-    if response.code == 200
-      output = JSON.load(response.body)
-      if !output.nil?
-        output["users"].each do |user|
-          if !$live_chans.include? user["name"]
-            $live_chans.push user["name"]
-          end
+    output = JSON.load(response.body)
+    if !output.nil?
+      $live_chans = []
+      output["streams"].each do |user|
+        if !$live_chans.include? user["channel"]["display_name"]
+          $live_chans.push user["channel"]["display_name"]
         end
-        force_host
       end
+      puts $live_chans.to_s
+      force_host
     end
   end
 
@@ -120,7 +130,11 @@ class TwitchHost
     target = $live_chans.shuffle.pop
     message = ".host " + target
     $host_chans.each do |chan|
-      chan.send message
+      if !$live_chans.include? chan
+        Channel(chan).send message
+        puts "HOSTING : #{chan} -> #{target}"
+        Channel("#synthesisbot").send("HOSTING : #{chan} -> #{target}")
+      end
     end
   end
 end
