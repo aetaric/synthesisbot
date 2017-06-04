@@ -9,8 +9,6 @@ class Twitch
   include Cinch::Plugin
   include ActiveSupport::Inflector
 
-  enforce_cooldown
-
   match /follow (.+)/, method: :follow
   match /source/, method: :source
   match /host (.+)/, method: :host
@@ -35,7 +33,7 @@ class Twitch
   end
 
   def synthesis(m)
-    # m.reply "SOMETHING"
+    m.reply "synthesis is a team: https://www.twitch.tv/team/synthesis"
   end
 
   def commands(m)

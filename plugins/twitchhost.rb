@@ -14,6 +14,7 @@ class TwitchHost
   listen_to :connect, :method => :pull_team
 
   timer 3600, method: :pull_team
+  timer 900, method: :refresh_live
 
   def process_live(m)
     if !$live_chans.include? chan_to_user(m)
@@ -21,12 +22,16 @@ class TwitchHost
       pull_team
     end
   end
+
+  def refresh_live(m=nil)
+    pull_live true
+  end
   
   def update_host(m)
     split_msg = m.message.split(" ")
     target = split_msg[0]
     if target == "-"
-      if $host_chans.include?
+      if $host_chans.include? chan_to_user(m)
         $host_chans.delete chan_to_user(m)
       end
     end
@@ -42,6 +47,7 @@ class TwitchHost
 
   def mass_host(m, target)
     if mod?(m)
+      pull_live(true)
       $team_chans.each do |chan|
         if !$live_chans.include? chan["name"]
           m.reply "#{chan["name"].to_s} Now hosting #{target}"
@@ -90,7 +96,7 @@ class TwitchHost
     pull_live
   end
 
-  def pull_live(m=nil)
+  def pull_live(m=false)
     ids = []
     $team_chans.each do |chan|
       ids.push chan["id"]
@@ -118,14 +124,16 @@ class TwitchHost
           $live_chans.push user["channel"]["display_name"]
         end
       end
-      puts $live_chans.to_s
-      force_host
+      Channel("#synthesisbot").send "Live Channels: " + $live_chans.to_s
+      if m == false
+        force_host
+      end 
     end
   end
 
   def force_host
     target = $live_chans.shuffle.pop
-    message = ".host " + target
+    message = ".host " + target.to_s
     $host_chans.each do |chan|
       if !$live_chans.include? chan
         Channel(chan).send message
