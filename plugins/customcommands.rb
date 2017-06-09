@@ -1,4 +1,5 @@
 require 'cinch'
+require 'cinch/cooldown'
 require 'active_support'
 require 'json'
 require 'net/http'
@@ -7,6 +8,8 @@ require 'uri'
 class CustomCommand
   include Cinch::Plugin
   include ActiveSupport::Inflector
+
+  enforce_cooldown
 
   listen_to :connect, :method => :setup
 

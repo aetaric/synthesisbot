@@ -33,7 +33,7 @@ class Twitch
   end
 
   def synthesis(m)
-    m.reply "synthesis is a team: https://www.twitch.tv/team/synthesis"
+    m.reply "synthesis is a team: https://www.twitch.tv/team/synthesis  Twitter: https://twitter.com/synthesistwitch"
   end
 
   def commands(m)

@@ -16,13 +16,6 @@ class TwitchHost
   timer 3600, method: :pull_team
   timer 900, method: :refresh_live
 
-  def process_live(m)
-    if !$live_chans.include? chan_to_user(m)
-      $live_chans.push chan_to_user(m)
-      pull_team
-    end
-  end
-
   def refresh_live(m=nil)
     pull_live true
   end
@@ -48,10 +41,10 @@ class TwitchHost
   def mass_host(m, target)
     if mod?(m)
       pull_live(true)
-      $team_chans.each do |chan|
-        if !$live_chans.include? chan["name"]
-          m.reply "#{chan["name"].to_s} Now hosting #{target}"
-          Channel(chan["name"].to_s).send (".host #{target}")
+      $host_chans.each do |chan|
+        if !$live_chans.include? chan
+          m.reply "#{chan.to_s} Now hosting #{target}"
+          Channel("#" + chan.to_s).send (".host #{target}")
         end 
       end
     end
