@@ -113,8 +113,8 @@ class TwitchHost
     if !output.nil?
       $live_chans = []
       output["streams"].each do |user|
-        if !$live_chans.include? user["channel"]["display_name"]
-          $live_chans.push user["channel"]["display_name"]
+        if !$live_chans.include? user["channel"]["display_name"].downcase
+          $live_chans.push user["channel"]["display_name"].downcase
         end
       end
       Channel("#synthesisbot").send "Live Channels: " + $live_chans.to_s
