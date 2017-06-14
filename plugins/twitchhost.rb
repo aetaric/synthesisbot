@@ -125,14 +125,18 @@ class TwitchHost
   end
 
   def force_host
-    target = $live_chans.shuffle.pop
-    message = ".host " + target.to_s
-    $host_chans.each do |chan|
-      if !$live_chans.include? chan
-        Channel(chan).send message
-        puts "HOSTING : #{chan} -> #{target}"
-        Channel("#synthesisbot").send("HOSTING : #{chan} -> #{target}")
+    if !$live_chans.empty?
+      target = $live_chans.shuffle.pop
+      message = ".host " + target.to_s
+      $host_chans.each do |chan|
+        if !$live_chans.include? chan
+          Channel(chan).send message
+          puts "HOSTING : #{chan} -> #{target}"
+          Channel("#synthesisbot").send("HOSTING : #{chan} -> #{target}")
+        end
       end
+    else
+      Channel("#synthesisbot").send("No Live channels. Skipping host event.")
     end
   end
 end
