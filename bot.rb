@@ -26,6 +26,9 @@ $brain = Brain.new
 $host_chans = []
 $live_chans = []
 $team_chans = []
+$clipshow = false
+$voting = false
+$results = []
 
 if !$brain.config
   $brain.setup
@@ -80,7 +83,7 @@ end
     @bot.warn "target: " + split_msg[0]
     @bot.warn "viewers: " + split_msg[1]
   end
-  
+
   on :join do |m|
     if m.user == $brain.bot["nick"]
       match_chan = false
@@ -100,7 +103,7 @@ end
     end
   end
 
-  # User state changed slightly and this code might not even be needed anymore. 
+  # User state changed slightly and this code might not even be needed anymore.
   #on :userstate do |m|
   #  if !mod?(m)
   #    if !m.channel.to_s.slice(1,m.channel.to_s.length) == $brain.bot["nick"].to_s
