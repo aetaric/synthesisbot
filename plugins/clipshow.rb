@@ -20,7 +20,7 @@ class ClipShow
       if mod?(m)
         m.reply "Yo Chat, It's the Clip Show!"
         sleep 2
-        m.reply "The rules are simple. Geoff will play a clip and then once Geoff or a mod uses !startvote enter a number between 1-10 where 1 is \"This is the worse clip\" and 10 is \"I've never seen something so funny\""
+        m.reply "The rules are simple. Geoff will play a clip and then once Geoff or a mod uses !startvote enter a number between 1-10 where 1 is \"This is the worst clip\" and 10 is \"I've never seen something so funny\""
         sleep 2
         m.reply "Votes can be whole numbers or halves (1 ,1.5 ,2 ,etc), and FYI, I'll remember only your first vote (for now)!"
         sleep 2
