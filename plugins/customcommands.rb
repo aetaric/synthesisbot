@@ -13,7 +13,7 @@ class CustomCommand
 
   listen_to :connect, :method => :setup
 
-  match /^!(\w+)/i, use_prefix: false, method: :custom
+  match /^!(\w+)\s?@?(\w+)?/i, use_prefix: false, method: :custom
   match /addcomm (\w+)([a-zA-Z0-9\w\W ]*)/, method: :add_custom
   match /updatecomm (\w+) ([a-zA-Z0-9\w\W ]*)/, method: :update_custom
   match /deletecomm (\w+)/, method: :delete_custom
@@ -22,10 +22,14 @@ class CustomCommand
     @collection = $mongo[:commands]
   end
 
-  def custom(m, command)
+  def custom(m, command, target=nil)
     results = @collection.find(channel: m.channel.name, command: command)
     if results.any?
-      m.reply "@#{m.user.name}, #{results.first["message"]}"
+      if target == nil
+        m.reply "@#{m.user.name}, #{results.first["message"]}"
+      else
+        m.reply "@#{target}, #{results.first["message"]}"
+      end
     end
   end
 

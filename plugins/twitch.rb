@@ -1,5 +1,5 @@
 require 'cinch'
-require 'cinch/cooldown'
+#require 'cinch/cooldown'
 require 'active_support'
 require 'json'
 require 'net/http'
@@ -14,6 +14,7 @@ class Twitch
   match /host (.+)/, method: :host
   match /synthesis/, method: :synthesis
   match /commands/, methods: :commands
+  match /kill Geoff/i, methods: :no
 
   def follow(m, plug)
     if mod?(m) 
@@ -21,9 +22,13 @@ class Twitch
     end
   end
 
+  def no(m)
+    m.reply ".timeout m.user 60 How about no..."
+  end
+
   def source(m)
     m.reply ".w #{m.user} I'm written in Ruby and my developer accepts pull reqs that resolve active issues or feature requests."
-    m.reply ".w #{m.user} You can find my source code here: https://github.com/aetaric/aetbot ."
+    m.reply ".w #{m.user} You can find my source code here: https://github.com/aetaric/synthesisbot ."
   end
 
   def host(m, target)
