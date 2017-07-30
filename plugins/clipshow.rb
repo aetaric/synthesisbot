@@ -46,15 +46,19 @@ class ClipShow
       if $voting == true
         if /(10|[1-9]|0[1-9])/.match(m.message)
           result = false
-          $results.each do |r|
-            if r["username"] == m.user.name
-              result = true
+
+          if !$results.empty?
+            $results.each do |r|
+              if r["username"] == m.user.name
+                result = true
+              end
             end
           end
+
           if result == false
             u = {}
-            u.username = m.user.name
-            u.vote = /(10|[1-9]|0[1-9])/.match(m.message)[1].to_f
+            u["username"] = m.user.name
+            u["vote"] = /(10|[1-9]|0[1-9])/.match(m.message)[1].to_f
             $results.push u
           end
         end
